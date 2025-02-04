@@ -164,6 +164,7 @@ export const deMnestix = {
     changesSavedSuccessfully: 'Änderungen erfolgreich gespeichert.',
     findOutMore: 'Mehr Informationen',
     dashboard: 'Dashboard',
+    dataspace: 'Dataspace',
     repository: 'Repository',
     home: 'Startseite',
     list: 'AAS Liste',

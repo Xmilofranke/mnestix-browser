@@ -1,6 +1,6 @@
 import MenuIcon from '@mui/icons-material/Menu';
 import { alpha, Box, Divider, Drawer, IconButton, List, styled, Typography } from '@mui/material';
-import { Dashboard, Login, Logout, OpenInNew, Settings } from '@mui/icons-material';
+import { Dashboard, Hub, Login, Logout, OpenInNew, Settings } from '@mui/icons-material';
 import React, { useState } from 'react';
 import { useAuth } from 'lib/hooks/UseAuth';
 import { FormattedMessage } from 'react-intl';
@@ -87,6 +87,11 @@ export default function MainMenu() {
             label: <FormattedMessage {...messages.mnestix.dashboard} />,
             to: '/',
             icon: <Dashboard />,
+        },
+        {
+            label: <FormattedMessage {...messages.mnestix.dataspace} />,
+            to: '/dataspace',
+            icon: <Hub />,
         },
         {
             label: <FormattedMessage {...messages.mnestix.settings} />,
