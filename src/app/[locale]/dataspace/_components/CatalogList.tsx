@@ -23,7 +23,6 @@ export const CatalogList = async () => {
                 },
             });
             const json = await res.json();
-            console.log(json);
             return json;
         } catch (error) {
             console.error(error);
@@ -68,7 +67,6 @@ export const CatalogList = async () => {
             </>
         );
     };
-
 
     const renderDataset = (dataset: any[]) => {
         return (
