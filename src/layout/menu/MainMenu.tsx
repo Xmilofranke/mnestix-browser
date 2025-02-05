@@ -12,6 +12,7 @@ import ListIcon from '@mui/icons-material/List';
 import packageJson from '../../../package.json';
 import { useEnv } from 'app/env/provider';
 import { ExternalLink } from 'layout/menu/ExternalLink';
+import { useTranslations } from 'next-intl';
 
 const StyledDrawer = styled(Drawer)(({ theme }) => ({
     '.MuiDrawer-paper': {
@@ -89,7 +90,7 @@ export default function MainMenu() {
             icon: <Dashboard />,
         },
         {
-            label: <FormattedMessage {...messages.mnestix.dataspace} />,
+            label: useTranslations('dataspaces')('dataspace'),
             to: '/dataspace',
             icon: <Hub />,
         },

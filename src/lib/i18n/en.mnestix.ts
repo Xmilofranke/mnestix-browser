@@ -161,7 +161,6 @@ export const enMnestix = {
     changesSavedSuccessfully: 'Changes saved successfully.',
     findOutMore: 'Find out more',
     dashboard: 'Dashboard',
-    dataspace: 'Data Space',
     repository: 'Repository',
     home: 'Home',
     list: 'AAS list',

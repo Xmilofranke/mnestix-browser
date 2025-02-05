@@ -36,5 +36,8 @@
   },
   "settings": {
     "header": "Einstellungen"
+  },
+  "dataspaces": {
+    "dataspace": "Dataspace"
   }
 }
