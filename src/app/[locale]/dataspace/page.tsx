@@ -12,7 +12,7 @@ export default function Page() {
                 <ViewHeading title={t('dataspace')} />
             </Box>
             <Box>
-                <p>Data Space Shenanigans start here!</p>
+                <p>{t('pageDescription')}</p>
             </Box>
 
             <CatalogList/>

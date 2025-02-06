@@ -38,6 +38,7 @@
     "header": "Settings"
   },
   "dataspaces": {
-    "dataspace": "Data Space"
+    "dataspace": "Data Space",
+    "pageDescription": "Configure your data space in the settings and select an asset from the fetched catalogs below."
   }
 }

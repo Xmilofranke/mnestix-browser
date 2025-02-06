@@ -38,6 +38,7 @@
     "header": "Einstellungen"
   },
   "dataspaces": {
-    "dataspace": "Dataspace"
+    "dataspace": "Dataspace",
+    "pageDescription": "Konfiguriere deinen Dataspace in den Eisntellungen und wähle ein Asset aus den verfügbaren Katalogen."
   }
 }
