@@ -1,68 +1,81 @@
+'use client';
+
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { fetchCatalogs } from 'lib/api/dataspace-api';
+import { fetchCatalogs, initiateNegotiation } from 'lib/api/dataspace-api/dataspace-api';
+import { useAsyncEffect } from 'lib/hooks/UseAsyncEffect';
+import { ReactElement, useState } from 'react';
 
-export const CatalogList = async () => {
-    const catalogs: any[] = await fetchCatalogs();
+export const CatalogList = () => {
+    const [catalogs, setCatalogs] = useState<ReactElement>();
 
-    const renderCatalogs = (catalogs: any[]) => {
+    useAsyncEffect(async() => {
+        setCatalogs(await renderCatalogs(await fetchCatalogs()));
+    }, [])
+    
+    const renderCatalogs = async (catalogs: any[]) => {
         return (
             <>
-                {catalogs
-                    .filter((catalog) => catalog['@type'] === 'dcat:Catalog')
-                    .map((catalog, i) => {
-                        return (
-                            <Accordion key={i}>
-                                <AccordionSummary
-                                    expandIcon={<ExpandMoreIcon />}
-                                    aria-controls="panel1-content"
-                                    id={'' + i}
-                                >
-                                    <Box
-                                        sx={{
-                                            width: '100%',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            paddingY: '.5em',
-                                        }}
+                {await Promise.all(
+                    catalogs
+                        .filter((catalog) => catalog['@type'] === 'dcat:Catalog')
+                        .map(async (catalog, i) => {
+                            const providerId = catalog['dspace:participantId'];
+                            const endpoint = catalog['dcat:service']['dcat:endpointUrl'];
+
+                            return (
+                                <Accordion key={i}>
+                                    <AccordionSummary
+                                        expandIcon={<ExpandMoreIcon />}
+                                        id={'' + i}
                                     >
-                                        <Typography fontWeight={600}>{catalog['dspace:participantId']}</Typography>
-                                        <Typography>&nbsp;</Typography>
-                                        <Typography>{catalog['dcat:service']['dcat:endpointUrl']}</Typography>
-                                        <Typography>&nbsp;</Typography>
-                                    </Box>
-                                </AccordionSummary>
-                                <AccordionDetails>
-                                    {renderDataset(catalog['dcat:dataset'])}
-                                    {renderCatalogs(catalog['dcat:catalog'])}
-                                </AccordionDetails>
-                            </Accordion>
-                        );
-                    })}
-            </>
-        );
-    };
-
-    const renderDataset = (dataset: any[]) => {
-        return (
-            <>
-                {Array.isArray(dataset) ? (
-                    <>
-                        {dataset.map((asset) => {
-                            return renderAsset(asset);
-                        })}
-                    </>
-                ) : (
-                    <>
-                        {renderAsset(dataset)}
-                    </>
+                                        <Box
+                                            sx={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                paddingY: '.5em',
+                                            }}
+                                        >
+                                            <Typography fontWeight={600}>{providerId}</Typography>
+                                            <Typography>&nbsp;</Typography>
+                                            <Typography>{endpoint}</Typography>
+                                            <Typography>&nbsp;</Typography>
+                                        </Box>
+                                    </AccordionSummary>
+                                    <AccordionDetails>
+                                        {await renderDataset(catalog['dcat:dataset'], providerId, endpoint)}
+                                        {await renderCatalogs(catalog['dcat:catalog'])}
+                                    </AccordionDetails>
+                                </Accordion>
+                            );
+                        }
+                    ),
                 )}
             </>
         );
     };
 
-    const renderAsset = (asset: any) => {
+    const renderDataset = async (dataset: any[], providerId: string, endpoint: string) => {
+        return (
+            <>
+                {Array.isArray(dataset) ? (
+                    <>
+                        {await Promise.all(
+                            dataset.map(async (asset) => {
+                                return await renderAsset(asset, providerId, endpoint);
+                            }),
+                        )}
+                    </>
+                ) : (
+                    <>{await renderAsset(dataset, providerId, endpoint)}</>
+                )}
+            </>
+        );
+    };
+
+    const renderAsset = async (asset: any, providerId: string, endpoint: string) => {
         return (
             <>
                 <Divider />
@@ -77,11 +90,23 @@ export const CatalogList = async () => {
                     }}
                 >
                     <Typography>{asset['@id']}</Typography>
-                    <Button variant={'outlined'}>Initiate Negotiation</Button>
+                    <Button
+                        variant={'outlined'}
+                        onClick={async () => await fetchAsset(asset['@id'], asset['odrl:hasPolicy']['@id'], providerId, endpoint)}
+                    >
+                        Initiate Negotiation
+                    </Button>
                 </Box>
             </>
         );
-    }
+    };
 
-    return <>{renderCatalogs(catalogs)}</>;
+    const fetchAsset = async (assetId: string, assetPolicyId: string, providerDspUrl: string, providerId: string) => {
+        const negotiation = await initiateNegotiation(assetId, assetPolicyId, providerDspUrl, providerId);
+        const negotiationId = negotiation['@id'];
+        
+        console.log(negotiationId);
+    };
+
+    return <>{catalogs}</>;
 };
