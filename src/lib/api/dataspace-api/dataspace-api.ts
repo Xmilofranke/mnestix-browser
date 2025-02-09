@@ -185,7 +185,6 @@ export async function fetchDataFromEndpoint(endpoint: string, authorizationToken
             }
         });
         const json = await res.json();
-        console.log(res);
         return json;
     } catch (e) {
         console.error(e);
