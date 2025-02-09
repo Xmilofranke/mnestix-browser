@@ -10,20 +10,16 @@ export async function fetchCatalogs() {
         '@type': 'QuerySpec',
     };
 
-    try {
-        const res = await fetch(CONSUMER_CATALOG_QUERY_URL + '/api/catalog/v1alpha/catalog/query', {
-            method: 'POST',
-            body: JSON.stringify(jsonBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Api-Key': CONNECTOR_API_KEY,
-            },
-        });
-        const json = await res.json();
-        return json;
-    } catch (error) {
-        console.error(error);
-    }
+    const res = await fetch(CONSUMER_CATALOG_QUERY_URL + '/api/catalog/v1alpha/catalog/query', {
+        method: 'POST',
+        body: JSON.stringify(jsonBody),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Api-Key': CONNECTOR_API_KEY,
+        },
+    });
+    const json = await res.json();
+    return json;
 }
 
 export async function initiateNegotiation(assetId: string, assetPolicyId: string, providerDspUrl: string, providerId: string) {
@@ -52,20 +48,16 @@ export async function initiateNegotiation(assetId: string, assetPolicyId: string
         callbackAddresses: [],
     };
 
-    try {
-        const res = await fetch(HOST + '/api/management/v3/contractnegotiations', {
-            method: 'POST',
-            body: JSON.stringify(jsonBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Api-Key': `${CONNECTOR_API_KEY}`,
-            },
-        });
-        const json = await res.json();
-        return json;
-    } catch (error) {
-        console.error(error);
-    }
+    const res = await fetch(HOST + '/api/management/v3/contractnegotiations', {
+        method: 'POST',
+        body: JSON.stringify(jsonBody),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Api-Key': `${CONNECTOR_API_KEY}`,
+        },
+    });
+    const json = await res.json();
+    return json;
 }
 
 export async function getContractNegotiation(negotiationId: string, timeout = 10) {
@@ -74,18 +66,14 @@ export async function getContractNegotiation(negotiationId: string, timeout = 10
     const startTime = Date.now();
 
     do {
-        try {
-            const res = await fetch(HOST + `/api/management/v3/contractnegotiations/${negotiationId}`, {
-                method: 'GET',
-                headers: {
-                    'X-Api-Key': `${CONNECTOR_API_KEY}`
-                }
-            });
-            negotiation = await res.json();
-            state = negotiation.state;
-        } catch (error) {
-            console.error(error);
-        }
+        const res = await fetch(HOST + `/api/management/v3/contractnegotiations/${negotiationId}`, {
+            method: 'GET',
+            headers: {
+                'X-Api-Key': `${CONNECTOR_API_KEY}`
+            }
+        });
+        negotiation = await res.json();
+        state = negotiation.state;
 
         if ((Date.now() - startTime) > (timeout * 1000)) {
             throw new Error('Waiting for contract negotiation timed out!');
@@ -115,20 +103,16 @@ export async function initiateTransfer(contractAgreementId: string, assetId: str
         'transferType': 'HttpData-PULL'
     }
 
-    try {
-        const res = await fetch(HOST + '/api/management/v3/transferprocesses', {
-            method: 'POST',
-            body: JSON.stringify(jsonBody),
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Api-Key': `${CONNECTOR_API_KEY}`
-            }
-        });
-        const json = await res.json();
-        return json;
-    } catch (error) {
-        console.error(error);
-    }
+    const res = await fetch(HOST + '/api/management/v3/transferprocesses', {
+        method: 'POST',
+        body: JSON.stringify(jsonBody),
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Api-Key': `${CONNECTOR_API_KEY}`
+        }
+    });
+    const json = await res.json();
+    return json;
 }
 
 export async function waitForTransferProcess(processId: string, timeout = 10) {
@@ -137,18 +121,14 @@ export async function waitForTransferProcess(processId: string, timeout = 10) {
     const startTime = Date.now();
 
     do {
-        try {
-            const res = await fetch(HOST + `/api/management/v3/transferprocesses/${processId}`, {
-                method: 'GET',
-                headers: {
-                    'X-Api-Key': `${CONNECTOR_API_KEY}`
-                }
-            });
-            transferProcess = await res.json();
-            state = transferProcess.state;
-        } catch (error) {
-            console.error(error);
-        }
+        const res = await fetch(HOST + `/api/management/v3/transferprocesses/${processId}`, {
+            method: 'GET',
+            headers: {
+                'X-Api-Key': `${CONNECTOR_API_KEY}`
+            }
+        });
+        transferProcess = await res.json();
+        state = transferProcess.state;
 
         if ((Date.now() - startTime) > (timeout * 1000)) {
             throw new Error('Waiting for transfer process timed out!')
@@ -159,34 +139,26 @@ export async function waitForTransferProcess(processId: string, timeout = 10) {
 }
 
 export async function getEdrDataAddress(transferProcessId: string) {
-    try {
-        const res = await fetch(HOST + `/api/management/v3/edrs/${transferProcessId}/dataaddress`, {
-            method: 'GET',
-            headers: {
-                'X-Api-Key': `${CONNECTOR_API_KEY}`
-            }
-        });
-        const json = await res.json();
-        return json;
-    } catch (e) {
-        console.error(e);
-    }
+    const res = await fetch(HOST + `/api/management/v3/edrs/${transferProcessId}/dataaddress`, {
+        method: 'GET',
+        headers: {
+            'X-Api-Key': `${CONNECTOR_API_KEY}`
+        }
+    });
+
+    const json = await res.json();
+    return json;
 }
 
 export async function fetchDataFromEndpoint(endpoint: string, authorizationToken: string) {
     // TODO: Why is this used instead of the returned endpoint? (https://github.com/eclipse-edc/MinimumViableDataspace/discussions/424)
     const PROVIDER_PUBLIC_API = 'http://localhost/provider-qna/public';
-
-    try {
-        const res = await fetch(PROVIDER_PUBLIC_API + '/api/public', {
-            method: 'GET',
-            headers: {
-                'Authorization': authorizationToken
-            }
-        });
-        const json = await res.json();
-        return json;
-    } catch (e) {
-        console.error(e);
-    }
+    const res = await fetch(PROVIDER_PUBLIC_API + '/api/public', {
+        method: 'GET',
+        headers: {
+            'Authorization': authorizationToken
+        }
+    });
+    const json = await res.json();
+    return json;
 }
