@@ -1,14 +1,8 @@
 'use client';
 
-import {
-    fetchDataFromEndpoint,
-    getContractNegotiation, getEdrDataAddress,
-    initiateNegotiation,
-    initiateTransfer,
-    waitForTransferProcess,
-} from 'lib/api/dataspace-api/dataspace-api';
+import { fetchAsset } from 'lib/api/dataspace-api/dataspace-api';
 import { encodeBase64 } from 'lib/util/Base64Util';
-import { useAasState } from 'components/contexts/CurrentAasContext';
+import { SubmodelOrIdReference, useAasState, useSubmodelState } from 'components/contexts/CurrentAasContext';
 import { useRouter } from 'next/navigation';
 import { LoadingButton } from '@mui/lab';
 import { useState } from 'react';
@@ -22,30 +16,48 @@ type NegotiationButtonProps = {
 
 export function NegotiationButton(props: NegotiationButtonProps) {
     const [, setAas] = useAasState();
+    const [, setSubmodels] = useSubmodelState();
     const [isNegotiating, setIsNegotiating] = useState<boolean>(false);
     const navigate = useRouter();
 
-    const fetchAsset = async (assetId: string, assetPolicyId: string, providerDspUrl: string, providerId: string) => {
+    async function navigateToAas(assetId: string, assetPolicyId: string, providerDspUrl: string, providerId: string) {
         setIsNegotiating(true);
         try {
-            const negotiation = await initiateNegotiation(assetId, assetPolicyId, providerDspUrl, providerId);
-            const negotiationId = negotiation['@id'];
-            const contractNegotiation = await getContractNegotiation(negotiationId);
-            const contractAgreementId = contractNegotiation['contractAgreementId'];
-            const transferProcess = await initiateTransfer(contractAgreementId, assetId, providerDspUrl, providerId);
-            const transferProcessId = transferProcess['@id'];
-            await waitForTransferProcess(transferProcessId);
-            const dataAddress = await getEdrDataAddress(transferProcessId);
-            const providerEndpoint = dataAddress['endpoint'];
-            const authorizationToken = dataAddress['authorization'];
-            const asset = await fetchDataFromEndpoint(providerEndpoint, authorizationToken);
+            const asset = await fetchAsset(assetId, assetPolicyId, providerDspUrl, providerId);
             setAas(asset);
+            const submodels = await fetchSubmodels(asset['submodels']);
+            setSubmodels(submodels);
             navigate.push(`/viewer/${encodeBase64(assetId)}`);
         } catch (e) {
             setIsNegotiating(false);
             console.error('Fetching asset from data space failed with error: ' + e);
         }
-    };
+    }
+
+    async function fetchSubmodels(submodelEndpoints: any[]): Promise<SubmodelOrIdReference[]> {
+        const requests = submodelEndpoints.map(async (endpoint: any) => {
+            const submodelId = endpoint['keys'][0]['value'];
+            const { assetPolicyId, providerDspUrl, providerId } = await findSubmodelInCatalogs(submodelId);
+            const submodel = await fetchAsset(submodelId, assetPolicyId, providerDspUrl, providerId);
+
+            return {
+                id: submodelId,
+                submodel: submodel,
+            };
+        });
+
+        const submodels = await Promise.all(requests);
+        return submodels;
+    }
+    
+    async function findSubmodelInCatalogs(submodelId: string) {
+        const assetPolicyId = '';
+        const providerDspUrl = '';
+        const providerId = '';
+        // TODO: find submodels in catalogs
+
+        return { assetPolicyId, providerDspUrl, providerId };
+    }
 
     return (
         <LoadingButton
@@ -53,7 +65,7 @@ export function NegotiationButton(props: NegotiationButtonProps) {
             loading={isNegotiating}
             disabled={isNegotiating}
             onClick={() =>
-                fetchAsset(
+                navigateToAas(
                     props.assetId,
                     props.assetPolicyId,
                     props.providerDspUrl,

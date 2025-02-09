@@ -4,6 +4,22 @@ const CONSUMER_CATALOG_QUERY_URL = 'http://localhost/consumer/fc';
 const CONNECTOR_API_KEY = 'password'; // The API Key of the own Connector
 const HOST = 'http://localhost/consumer/cp'; // My own control plane
 
+export async function fetchAsset(assetId: string, assetPolicyId: string, providerDspUrl: string, providerId: string) {
+    const negotiation = await initiateNegotiation(assetId, assetPolicyId, providerDspUrl, providerId);
+    const negotiationId = negotiation['@id'];
+    const contractNegotiation = await getContractNegotiation(negotiationId);
+    const contractAgreementId = contractNegotiation['contractAgreementId'];
+    const transferProcess = await initiateTransfer(contractAgreementId, assetId, providerDspUrl, providerId);
+    const transferProcessId = transferProcess['@id'];
+    await waitForTransferProcess(transferProcessId);
+    const dataAddress = await getEdrDataAddress(transferProcessId);
+    const providerEndpoint = dataAddress['endpoint'];
+    const authorizationToken = dataAddress['authorization'];
+    const asset = await fetchDataFromEndpoint(providerEndpoint, authorizationToken);
+
+    return asset;
+}
+
 export async function fetchCatalogs() {
     const jsonBody = {
         '@context': ['https://w3id.org/edc/connector/management/v0.0.1'],
