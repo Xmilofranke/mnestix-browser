@@ -11,6 +11,7 @@ import { encodeBase64 } from 'lib/util/Base64Util';
 import { useAasState } from 'components/contexts/CurrentAasContext';
 import { useRouter } from 'next/navigation';
 import { LoadingButton } from '@mui/lab';
+import { useState } from 'react';
 
 type NegotiationButtonProps = {
     assetId: string,
@@ -21,9 +22,11 @@ type NegotiationButtonProps = {
 
 export function NegotiationButton(props: NegotiationButtonProps) {
     const [, setAas] = useAasState();
+    const [isNegotiating, setIsNegotiating] = useState<boolean>(false);
     const navigate = useRouter();
 
     const fetchAsset = async (assetId: string, assetPolicyId: string, providerDspUrl: string, providerId: string) => {
+        setIsNegotiating(true);
         try {
             const negotiation = await initiateNegotiation(assetId, assetPolicyId, providerDspUrl, providerId);
             const negotiationId = negotiation['@id'];
@@ -39,13 +42,16 @@ export function NegotiationButton(props: NegotiationButtonProps) {
             setAas(asset);
             navigate.push(`/viewer/${encodeBase64(assetId)}`);
         } catch (e) {
-            console.error('Fetching asset from dataspace failed with error: ' + e);
+            setIsNegotiating(false);
+            console.error('Fetching asset from data space failed with error: ' + e);
         }
     };
 
     return (
         <LoadingButton
             variant={'outlined'}
+            loading={isNegotiating}
+            disabled={isNegotiating}
             onClick={() =>
                 fetchAsset(
                     props.assetId,
