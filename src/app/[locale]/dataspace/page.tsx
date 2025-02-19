@@ -1,10 +1,20 @@
 import { Box } from '@mui/material';
 import { ViewHeading } from 'components/basics/ViewHeading';
 import { CatalogList } from 'app/[locale]/dataspace/_components/CatalogList';
-import { useTranslations } from 'next-intl';
+import { fetchCatalogs } from 'lib/api/dataspace-api/dataspace-api';
+import { getTranslations } from 'next-intl/server';
 
-export default function Page() {
-    const t = useTranslations('dataspaces');
+export default async function Page() {
+    const t = await getTranslations('dataspaces');
+    const catalogs = await getCatalogs()
+
+    async function getCatalogs() {
+        try {
+            return await fetchCatalogs();
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
     return (
         <Box sx={{ p: 4, width: '100%', margin: '0 auto' }}>
@@ -15,7 +25,7 @@ export default function Page() {
                 <p>{t('pageDescription')}</p>
             </Box>
 
-            <CatalogList/>
+            <CatalogList catalogs={catalogs} />
         </Box>
     );
 }

@@ -1,20 +1,18 @@
-import { fetchCatalogs } from 'lib/api/dataspace-api/dataspace-api';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Typography } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DatasetItem } from 'app/[locale]/dataspace/_components/DatasetItem';
 
 type CatalogListProps = {
-    catalogs?: any[] | null;
+    catalogs: any[];
 }
 
-export async function CatalogList(props: CatalogListProps) {
-    const catalogs = props.catalogs ?? await fetchCatalogs();
+export function CatalogList(props: CatalogListProps) {
 
     return (
         <>
-            {catalogs
+            {props.catalogs
                 .filter((catalog: any) => catalog['@type'] === 'dcat:Catalog')
-                .map(async (catalog: any) => {
+                .map((catalog: any) => {
                         const providerId = catalog['dspace:participantId'];
                         const endpoint = catalog['dcat:service']['dcat:endpointUrl'];
 
