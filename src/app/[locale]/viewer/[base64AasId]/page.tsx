@@ -112,13 +112,16 @@ export default function Page() {
         reference: Reference,
         smDescriptor?: SubmodelDescriptor,
     ): Promise<SubmodelOrIdReference> {
+        const submodel = submodels.find((submodel) => submodel.id === reference.keys[0].value);
+        if (submodel) return submodel;
+
         const submodelResponse = await performSubmodelFullSearch(reference, smDescriptor);
-        if (!submodelResponse.isSuccess)
+        if (!submodelResponse.isSuccess) {
             return {
                 id: reference.keys[0].value,
                 error: 'Submodel failed to load', // TODO error localization
             };
-
+        }
         return {
             id: submodelResponse.result.id,
             submodel: submodelResponse.result,
