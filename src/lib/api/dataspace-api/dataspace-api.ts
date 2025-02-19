@@ -167,7 +167,9 @@ export async function getEdrDataAddress(transferProcessId: string) {
 }
 
 export async function fetchDataFromEndpoint(endpoint: string, authorizationToken: string) {
-    // TODO: Why is this used instead of the returned endpoint? (https://github.com/eclipse-edc/MinimumViableDataspace/discussions/424)
+    // The PROVIDER_PUBLIC_API variable is used, because the returned endpoint is the service name
+    // inside the Kubernetes Cluster of the MVD, which is not accessible from outside.
+    // https://github.com/eclipse-edc/MinimumViableDataspace/discussions/424?sort=old#discussioncomment-12162025
     const PROVIDER_PUBLIC_API = 'http://localhost/provider-qna/public';
     const res = await fetch(PROVIDER_PUBLIC_API + '/api/public', {
         method: 'GET',

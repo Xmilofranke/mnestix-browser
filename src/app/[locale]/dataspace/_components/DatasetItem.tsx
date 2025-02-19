@@ -11,23 +11,23 @@ export function DatasetItem(props: DatasetItemProps) {
         <>
             {Array.isArray(props.dataset) ? (
                 <>
-                    {props.dataset.map(async (asset) => {
-                        return (
-                            <AssetItem
-                                asset={asset}
-                                providerId={props.providerId}
-                                endpoint={props.endpoint}
-                                key={asset['@id']}
-                            />
-                        );
-                    })}
+                    {props.dataset
+                        .filter((asset) => asset['aas-type'] === 'AssetAdministrationShell')
+                        .map((asset) => {
+                            return (
+                                <AssetItem
+                                    asset={asset}
+                                    providerId={props.providerId}
+                                    endpoint={props.endpoint}
+                                    key={asset['@id']}
+                                />
+                            );
+                        })}
                 </>
             ) : (
-                <AssetItem
-                    asset={props.dataset}
-                    providerId={props.providerId}
-                    endpoint={props.endpoint}
-                />
+                props.dataset['aas-type'] === 'AssetAdministrationShell' && (
+                    <AssetItem asset={props.dataset} providerId={props.providerId} endpoint={props.endpoint} />
+                )
             )}
         </>
     );
