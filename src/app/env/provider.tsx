@@ -27,6 +27,9 @@ const initialValues: EnvironmentalVariables = {
     KEYCLOAK_ENABLED: false,
     IMPRINT_URL: '',
     DATA_PRIVACY_URL: '',
+    CATALOG_QUERY_URL: '',
+    CONNECTOR_CONTROL_PLANE_URL: '',
+    CONNECTOR_API_KEY: '',
 };
 
 export const EnvContext = createContext(initialValues);

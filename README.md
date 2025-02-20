@@ -27,7 +27,8 @@ implementation of standardized digital twins. It opens the way for use cases suc
 You can find a demo [here](https://mnestix-prod.azurewebsites.net/).
 Some screenshots can be found in the [screenshots folder](screenshots).
 
-### **If you need support feel free to contact us through our website [here](https://xitaso.com/kompetenzen/mnestix/#support).**
+### **If you need support feel free to contact us through our
+website [here](https://xitaso.com/kompetenzen/mnestix/#support).**
 
 ## Quickstart
 
@@ -145,7 +146,8 @@ NEXTAUTH_SECRET: '<<YOUR_SECRET>>'
   **Mnestix Browser on port 3000 - http://localhost:3000**
   <br><br>
 
-- **docker-compose/compose.frontend.yml** - runs Mnestix Browser with a Basyx environment (AAS-Environment with MongoDB, Discovery Service, AAS/Submodel Registry) but without the Mnestix-API.<br>
+- **docker-compose/compose.frontend.yml** - runs Mnestix Browser with a Basyx environment (AAS-Environment with MongoDB,
+  Discovery Service, AAS/Submodel Registry) but without the Mnestix-API.<br>
   **Mnestix Browser on port 3000 - http://localhost:3000**
 
 - **docker-compose/compose.dev.yml** - override file to run Mnestix Browser in a development environment. A development
@@ -300,6 +302,9 @@ Mnestix provides the following configuration options. You can adapt the values i
 | `KEYCLOAK_REALM`                      | BaSyx                       | Configuration variable that specifies the name of the Keycloak realm your application will use for authentication and authorization.                                                                                               | optional |
 | `IMPRINT_URL`                         |                             | Address that will be used in the imprint link. Will only show the link, if a value has been set.                                                                                                                                   | optional |
 | `DATA_PRIVACY_URL`                    |                             | Address that will be used in the data privacy link. Will only show the link, if a value has been set.                                                                                                                              | optional |
+| `CATALOG_QUERY_URL`                   |                             | Address that will be used to access the own federated catalog.                                                                                                                                                                     | optional |
+| `CONNECTOR_CONTROL_PLANE_URL`         |                             | Address that will be used to communicate with the own data space connector.                                                                                                                                                        | optional |
+| `CONNECTOR_API_KEY`                   |                             | The API Key of the own connector.                                                                                                                                                                                                  | optional |
 
 ### How to set a custom logo
 
@@ -419,7 +424,9 @@ MNESTIX_BACKEND_API_URL: '{{MNESTIX_BACKEND_API_URL}}'
 This is the easiest configuration, for when you only want to visualize and browse through AAS.
 If you choose to run the Mnestix Browser without the Mnestix API, the Feature Flags `AUTHENTICATION_FEATURE_FLAG`
 and `AAS_LIST_FEATURE_FLAG` will be overwritten to `false` as these Features use the functionality of the API.
-The other environment variables should be configured [as described](#frontend-configuration). If you want to run Mnestix Browser with an Basyx environment you can simply use the compose.frontend file which is described [here](#Docker-Compose-files).
+The other environment variables should be configured [as described](#frontend-configuration). If you want to run Mnestix
+Browser with an Basyx environment you can simply use the compose.frontend file which is
+described [here](#Docker-Compose-files).
 
 #### How to configure the BaSyx AAS Repository
 
@@ -733,4 +740,5 @@ For this purpose, issues which are particularly suitable for a first contributio
 If this is your first time contributing to an eclipse project, we recommend having a look at this
 guide: [Contributing to a Eclipse project](https://www.eclipse.org/contribute/).  
 We would be more than happy to have you on board. If there is anything you want to know, feel free to contact
-us [mnestix@xitaso.com](mailto:mnestix@xitaso.com) or through our website [here](https://xitaso.com/kompetenzen/mnestix/#support).   
+us [mnestix@xitaso.com](mailto:mnestix@xitaso.com) or through our
+website [here](https://xitaso.com/kompetenzen/mnestix/#support).   

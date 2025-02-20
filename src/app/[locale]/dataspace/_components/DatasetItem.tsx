@@ -9,6 +9,8 @@ type DatasetItemProps = {
 export function DatasetItem(props: DatasetItemProps) {
     return (
         <>
+            {/*This is necessary because for some reason the dataset of the
+            root catalog contains an asset object instead of an array*/}
             {Array.isArray(props.dataset) ? (
                 <>
                     {props.dataset

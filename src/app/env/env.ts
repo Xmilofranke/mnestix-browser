@@ -44,6 +44,9 @@ export const getEnv = async (): Promise<EnvironmentalVariables> => {
         KEYCLOAK_ENABLED: process.env.KEYCLOAK_ENABLED?.toLowerCase() === 'true'.toLowerCase(),
         IMPRINT_URL: process.env.IMPRINT_URL,
         DATA_PRIVACY_URL: process.env.DATA_PRIVACY_URL,
+        CATALOG_QUERY_URL: process.env.CATALOG_QUERY_URL,
+        CONNECTOR_CONTROL_PLANE_URL: process.env.CONNECTOR_CONTROL_PLANE_URL,
+        CONNECTOR_API_KEY: process.env.CONNECTOR_API_KEY,
     };
 
     const themingVariables = {
@@ -92,4 +95,7 @@ export type EnvironmentalVariables = {
     KEYCLOAK_ENABLED: boolean;
     IMPRINT_URL: string | undefined;
     DATA_PRIVACY_URL: string | undefined;
+    CATALOG_QUERY_URL: string | undefined;
+    CONNECTOR_CONTROL_PLANE_URL: string | undefined;
+    CONNECTOR_API_KEY: string | undefined;
 };

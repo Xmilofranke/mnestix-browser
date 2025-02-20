@@ -1,9 +1,5 @@
 'use server';
 
-const CONSUMER_CATALOG_QUERY_URL = 'http://localhost/consumer/fc';
-const CONNECTOR_API_KEY = 'password'; // The API Key of the own Connector
-const HOST = 'http://localhost/consumer/cp'; // My own control plane
-
 export async function fetchAsset(assetId: string, assetPolicyId: string, providerDspUrl: string, providerId: string) {
     const negotiation = await initiateNegotiation(assetId, assetPolicyId, providerDspUrl, providerId);
     const negotiationId = negotiation['@id'];
@@ -25,13 +21,12 @@ export async function fetchCatalogs() {
         '@context': ['https://w3id.org/edc/connector/management/v0.0.1'],
         '@type': 'QuerySpec',
     };
-
-    const res = await fetch(CONSUMER_CATALOG_QUERY_URL + '/api/catalog/v1alpha/catalog/query', {
+    const res = await fetch(process.env.CATALOG_QUERY_URL + '/api/catalog/v1alpha/catalog/query', {
         method: 'POST',
         body: JSON.stringify(jsonBody),
         headers: {
             'Content-Type': 'application/json',
-            'X-Api-Key': CONNECTOR_API_KEY,
+            'X-Api-Key': `${process.env.CONNECTOR_API_KEY}`,
         },
     });
     const json = await res.json();
@@ -64,12 +59,12 @@ export async function initiateNegotiation(assetId: string, assetPolicyId: string
         callbackAddresses: [],
     };
 
-    const res = await fetch(HOST + '/api/management/v3/contractnegotiations', {
+    const res = await fetch(process.env.CONNECTOR_CONTROL_PLANE_URL + '/api/management/v3/contractnegotiations', {
         method: 'POST',
         body: JSON.stringify(jsonBody),
         headers: {
             'Content-Type': 'application/json',
-            'X-Api-Key': `${CONNECTOR_API_KEY}`,
+            'X-Api-Key': `${process.env.CONNECTOR_API_KEY}`,
         },
     });
     const json = await res.json();
@@ -82,10 +77,10 @@ export async function getContractNegotiation(negotiationId: string, timeout = 10
     const startTime = Date.now();
 
     do {
-        const res = await fetch(HOST + `/api/management/v3/contractnegotiations/${negotiationId}`, {
+        const res = await fetch(process.env.CONNECTOR_CONTROL_PLANE_URL + `/api/management/v3/contractnegotiations/${negotiationId}`, {
             method: 'GET',
             headers: {
-                'X-Api-Key': `${CONNECTOR_API_KEY}`
+                'X-Api-Key': `${process.env.CONNECTOR_API_KEY}`
             }
         });
         negotiation = await res.json();
@@ -119,12 +114,12 @@ export async function initiateTransfer(contractAgreementId: string, assetId: str
         'transferType': 'HttpData-PULL'
     }
 
-    const res = await fetch(HOST + '/api/management/v3/transferprocesses', {
+    const res = await fetch(process.env.CONNECTOR_CONTROL_PLANE_URL + '/api/management/v3/transferprocesses', {
         method: 'POST',
         body: JSON.stringify(jsonBody),
         headers: {
             'Content-Type': 'application/json',
-            'X-Api-Key': `${CONNECTOR_API_KEY}`
+            'X-Api-Key': `${process.env.CONNECTOR_API_KEY}`
         }
     });
     const json = await res.json();
@@ -137,10 +132,10 @@ export async function waitForTransferProcess(processId: string, timeout = 10) {
     const startTime = Date.now();
 
     do {
-        const res = await fetch(HOST + `/api/management/v3/transferprocesses/${processId}`, {
+        const res = await fetch(process.env.CONNECTOR_CONTROL_PLANE_URL + `/api/management/v3/transferprocesses/${processId}`, {
             method: 'GET',
             headers: {
-                'X-Api-Key': `${CONNECTOR_API_KEY}`
+                'X-Api-Key': `${process.env.CONNECTOR_API_KEY}`
             }
         });
         transferProcess = await res.json();
@@ -155,10 +150,10 @@ export async function waitForTransferProcess(processId: string, timeout = 10) {
 }
 
 export async function getEdrDataAddress(transferProcessId: string) {
-    const res = await fetch(HOST + `/api/management/v3/edrs/${transferProcessId}/dataaddress`, {
+    const res = await fetch(process.env.CONNECTOR_CONTROL_PLANE_URL + `/api/management/v3/edrs/${transferProcessId}/dataaddress`, {
         method: 'GET',
         headers: {
-            'X-Api-Key': `${CONNECTOR_API_KEY}`
+            'X-Api-Key': `${process.env.CONNECTOR_API_KEY}`
         }
     });
 

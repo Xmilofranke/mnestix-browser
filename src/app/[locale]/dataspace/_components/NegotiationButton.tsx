@@ -66,6 +66,8 @@ export function NegotiationButton(props: NegotiationButtonProps) {
         for (const catalog of catalogs) {
             const dataset = catalog['dcat:dataset'];
 
+            // This is necessary because for some reason the dataset of the
+            // root catalog contains an asset object instead of an array
             if (Array.isArray(dataset)) {
                 for (const asset of dataset) {
                     if (asset['@id'] === submodelId && asset['aas-type'] === 'Submodel') {
@@ -89,7 +91,6 @@ export function NegotiationButton(props: NegotiationButtonProps) {
             }
 
             const result = findSubmodelInCatalogs(catalog['dcat:catalog'], submodelId);
-            console.log(result);
             if (result) return result;
         }
 
