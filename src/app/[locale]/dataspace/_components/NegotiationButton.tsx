@@ -24,6 +24,7 @@ export function NegotiationButton(props: NegotiationButtonProps) {
         setIsNegotiating(true);
         try {
             const asset = await fetchAsset(assetId, assetPolicyId, providerDspUrl, providerId);
+            if (asset['errors']) throw Error(asset['errors'][0]);
             setAas(asset);
             const submodels = await fetchSubmodels(asset['submodels']);
             setSubmodels(submodels);
